@@ -33,4 +33,203 @@
       input, select, textarea { background: var(--off); border: 1px solid var(--border); color: #fff; font-family: "Barlow", sans-serif; font-size: 15px; padding: 12px 14px; outline: none; width: 100%; transition: border-color 0.2s; appearance: none; }
       input:focus, select:focus, textarea:focus { border-color: var(--green); }
       select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; cursor: pointer; }
-      textarea { min-height: 100px; resize
+      textarea { min-height: 100px; resize: vertical; }
+      .divider { height: 1px; background: var(--border); position: relative; }
+      .campaign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .campaign-item { display: flex; align-items: center; gap: 14px; padding: 18px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.15s; background: var(--off); position: relative; }
+      .campaign-item.selected { border-color: var(--c); background: color-mix(in srgb, var(--c) 7%, var(--off)); }
+      .campaign-item input { display: none; }
+      .cb-box { width: 24px; height: 24px; border: 1.5px solid var(--border); background: var(--card); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: transparent; }
+      .campaign-item.selected .cb-box { border-color: var(--c); background: var(--c); color: #000; }
+      .campaign-item.led { --c: var(--yellow); } .campaign-item.ev { --c: var(--green); } .campaign-item.backup { --c: var(--red); } .campaign-item.ti { --c: var(--cyan); } .campaign-item.service { --c: var(--orange); }
+      .cb-content { display: flex; align-items: center; gap: 12px; flex: 1; }
+      .cb-emoji { font-size: 20px; }
+      .cb-name { font-size: 14px; font-weight: 700; color: #ddd; }
+      .cb-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+      .more-toggle { display: flex; align-items: center; gap: 12px; cursor: pointer; background: none; border: none; width: 100%; color: #ccc; font-family: "Courier Prime", monospace; font-size: 10px; letter-spacing: 2px; margin: 10px 0; text-transform: uppercase; }
+      .tline { flex: 1; height: 1px; background: var(--border); }
+      .tplus { font-size: 20px; color: var(--green); transition: transform 0.2s; font-weight: 700; line-height: 1; }
+      .tplus.open { transform: rotate(45deg); }
+      .more-fields { display: none; flex-direction: column; gap: 12px; }
+      .more-fields.open { display: flex; }
+      .submit-btn { background: var(--green); color: #000; border: none; padding: 18px; font-family: "Bebas Neue", sans-serif; font-size: 22px; letter-spacing: 2px; cursor: pointer; width: 100%; margin-top: 10px; transition: opacity 0.2s; }
+      .submit-btn:hover { opacity: 0.9; }
+      .success-screen { display: none; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding: 80px 20px; }
+      .success-title { font-family: "Bebas Neue", sans-serif; font-size: 44px; color: var(--green); }
+      @media (max-width: 540px) { .row-2, .campaign-grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar"></div>
+    <div class="header">
+      <div class="header-brand">Mainstream Electric · Sacramento Commercial</div>
+      <div class="header-headline">COMMERCIAL<br /><span>INTEREST FORM</span></div>
+      <div class="header-sub">Submit your project details for priority scheduling within 24 hours.</div>
+    </div>
+
+    <form class="form-wrap" id="interestForm">
+      <div>
+        <div class="section-label">Contact Information</div>
+        <div class="row row-2">
+          <div class="field"><label class="field-label">Company Name <span class="req">*</span></label><input type="text" id="company" placeholder="Acme Distribution" required /></div>
+          <div class="field"><label class="field-label">Your Name <span class="req">*</span></label><input type="text" id="name" placeholder="Jane Smith" required /></div>
+        </div>
+        <div class="row row-2" style="margin-top: 12px">
+          <div class="field"><label class="field-label">Phone <span class="req">*</span></label><input type="tel" id="phone" placeholder="(916) 555-0100" required /></div>
+          <div class="field"><label class="field-label">Email</label><input type="email" id="email" placeholder="jane@acme.com" /></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div>
+        <div class="section-label">Service Interests <span style="color: var(--green)">*</span></div>
+        <div class="campaign-grid" id="campaignGroup">
+          <label class="campaign-item led" onclick="toggleCampaign(this)"><input type="checkbox" value="LED Retrofit" /><div class="cb-box">✓</div><div class="cb-content"><div class="cb-emoji">💡</div><div><div class="cb-name">LED Retrofit</div><div class="cb-sub">High-bay / Cold Storage</div></div></div></label>
+          <label class="campaign-item ev" onclick="toggleCampaign(this)"><input type="checkbox" value="EV Charging" /><div class="cb-box">✓</div><div class="cb-content"><div class="cb-emoji">⚡</div><div><div class="cb-name">EV Charging</div><div class="cb-sub">Fleet & Public</div></div></div></label>
+          <label class="campaign-item backup" onclick="toggleCampaign(this)"><input type="checkbox" value="Generators & BESS" /><div class="cb-box">✓</div><div class="cb-content"><div class="cb-emoji">🔋</div><div><div class="cb-name">Generators & BESS</div><div class="cb-sub">Refrigeration / Grid Resiliency</div></div></div></label>
+          <label class="campaign-item ti" onclick="toggleCampaign(this)"><input type="checkbox" value="Tenant Improvement" /><div class="cb-box">✓</div><div class="cb-content"><div class="cb-emoji">🏗️</div><div><div class="cb-name">Tenant Improvement</div><div class="cb-sub">Buildouts & Panels</div></div></div></label>
+          <label class="campaign-item service" onclick="toggleCampaign(this)" style="grid-column: 1 / -1"><input type="checkbox" value="Emergency & Maintenance" /><div class="cb-box">✓</div><div class="cb-content"><div class="cb-emoji">🚨</div><div><div class="cb-name">24/7 Emergency & Maintenance</div><div class="cb-sub">Troubleshooting & preventative service calls</div></div></div></label>
+        </div>
+      </div>
+      <button type="button" class="more-toggle" onclick="toggleMore()"><span class="tline"></span><span>Add More Details (Optional)</span><span class="tplus" id="tplus">+</span><span class="tline"></span></button>
+      <div class="more-fields" id="moreFields">
+        <div class="row row-2">
+          <div class="field"><label class="field-label">Facility Address</label><input type="text" id="address" placeholder="1234 Industrial Blvd" /></div>
+          <div class="field"><label class="field-label">City</label><input type="text" id="city" placeholder="West Sacramento" /></div>
+        </div>
+        <div class="row row-2">
+          <div class="field"><label class="field-label">Facility Type</label><select id="facilityType"><option value="" disabled selected>Select type</option><option>Warehouse / Distribution</option><option>Cold Storage</option><option>Industrial Park</option><option>Office / Commercial</option><option>Other</option></select></div>
+          <div class="field"><label class="field-label">Approx. Square Footage</label><select id="sqft"><option value="" disabled selected>Select size</option><option>Under 10k sqft</option><option>10k – 50k sqft</option><option>50k – 100k sqft</option><option>100k – 500k sqft</option><option>500k+</option></select></div>
+        </div>
+        <div class="row row-2">
+          <div class="field"><label class="field-label">Best Time to Reach You</label><select id="bestTime"><option value="" disabled selected>Select time</option><option>Morning (8–11am)</option><option>Midday (11am–2pm)</option><option>Afternoon (2–5pm)</option><option>Anytime</option></select></div>
+          <div class="field"><label class="field-label">Your Title / Role</label><input type="text" id="title" placeholder="Facilities Manager" /></div>
+        </div>
+        <div class="field"><label class="field-label">Anything else we should know?</label><textarea id="notes" placeholder="E.g. 3 buildings, looking to act this quarter..."></textarea></div>
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">SUBMIT INTEREST REQUEST →</button>
+    </form>
+
+    <div class="success-screen" id="successScreen">
+      <div class="success-title">THANK YOU.</div>
+      <p>We've received your request and will be in touch shortly.</p>
+    </div>
+
+    <script>
+      function toggleCampaign(label) {
+        const cb = label.querySelector("input");
+        cb.checked = !cb.checked;
+        label.classList.toggle("selected", cb.checked);
+        label.querySelector(".cb-box").textContent = cb.checked ? "✓" : "";
+      }
+      function toggleMore() {
+        const f = document.getElementById("moreFields");
+        const p = document.getElementById("tplus");
+        const open = f.classList.toggle("open");
+        p.classList.toggle("open", open);
+      }
+
+      document.getElementById("interestForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const btn = document.getElementById("submitBtn");
+        btn.disabled = true;
+        btn.textContent = "SENDING...";
+
+        const getV = (id) => document.getElementById(id)?.value?.trim() || "";
+        const campaigns = Array.from(document.querySelectorAll("#campaignGroup input:checked")).map((c) => c.value).join(", ");
+
+        const desc = [
+          "📋 NEW INTEREST FORM SUBMISSION", "",
+          `Company: ${getV("company")}`,
+          `Contact: ${getV("name")} (${getV("title")})`,
+          `Phone: ${getV("phone")}`,
+          `Email: ${getV("email")}`, "",
+          `Interests: ${campaigns}`, "",
+          `Address: ${getV("address")}, ${getV("city")}`,
+          `Facility: ${getV("facilityType")} (${getV("sqft")})`,
+          `Best Time: ${getV("bestTime")}`,
+          `Notes: ${getV("notes")}`,
+        ].join("\n");
+
+        // GATHERING SEPARATE DATA POINTS FOR YOUR CRM COLUMNS
+        const payload = {
+          name: `🔥 INTEREST: ${getV("company")}`, // This will be your Task Name
+          customerName: getV("name"),             // Use this for "Name" column
+          customerPhone: getV("phone"),           // Use this for "Phone" column
+          customerEmail: getV("email"),
+          serviceInterests: campaigns,             // Use this for "Service Interest" column
+          description: desc,
+          priority: 2,
+          status: "to do"
+        };
+
+        try {
+          await fetch(`https://hook.us2.make.com/16zp13c74ycu90y20qa7xabpltsnkvmv`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          document.getElementById("interestForm").style.display = "none";
+          document.getElementById("successScreen").style.display = "flex";
+        } catch {
+          btn.disabled = false;
+          btn.textContent = "SUBMIT INTEREST REQUEST →";
+        }
+      });
+    </script>
+
+    <style>
+      .brochure-container { width: 100%; max-width: 1200px; margin: 40px auto; padding: 0 40px; }
+      .brochure-label { font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--green); margin-bottom: 10px; display: block; }
+      .brochure-h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(60px, 10vw, 120px); line-height: 0.85; margin-bottom: 20px; }
+      .brochure-h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 6vw, 80px); line-height: 0.9; margin-bottom: 15px; color: var(--white); }
+      .b-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-top: 40px; }
+      .b-feature-item { display: flex; gap: 15px; margin-bottom: 25px; align-items: start; padding: 20px; border: 1px solid var(--border); background: var(--card); }
+      .qr-box { width: 120px; height: 120px; background: #fff; padding: 8px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+      @media (max-width: 768px) { .b-grid { grid-template-columns: 1fr; } }
+    </style>
+
+    <div class="brochure-container">
+      <section class="hero" style="padding: 80px 0;">
+        <span class="brochure-label">Mainstream Electric | Sacramento Commercial</span>
+        <h1 class="brochure-h1">2026<br><span style="color:var(--green)">COMMERCIAL</span><br>SERVICES</h1>
+        <p style="font-size: 20px; font-weight: 700;">Raphael Nava</p>
+        <p style="color: var(--muted);">Commercial Energy Consultant</p>
+        <p style="font-family: 'Bebas Neue'; font-size: 32px; color: var(--yellow);">714.926.1290</p>
+      </section>
+
+      <section style="padding: 60px 0; border-top: 1px solid var(--border);">
+        <h2>COMMERCIAL <span style="color:var(--green)">LED RETROFITS</span></h2>
+        <div class="b-grid">
+          <div>
+            <div class="b-feature-item"><b>Maximize ROI</b><p>Meet SMUD commercial rebate requirements up to $80k.</p></div>
+            <div class="b-feature-item"><b>Liability Reduction</b><p>Brighten production floors to reduce safety risks.</p></div>
+          </div>
+          <div style="border-left: 4px solid var(--green); padding-left: 30px;">
+            <p style="font-size: 24px; font-family: 'Bebas Neue'; color: var(--yellow);">50-70% Energy Reduction</p>
+            <p style="font-size: 14px; color: var(--muted);">Typical warehouse high-bay results.</p>
+          </div>
+        </div>
+      </section>
+
+      <section style="padding: 60px 0; border-top: 1px solid var(--border); text-align: center;">
+        <h2 style="font-size: clamp(40px, 8vw, 100px);">SCHEDULE YOUR<br><span style="color:var(--green)">ENERGY AUDIT</span></h2>
+        <div class="b-grid" style="text-align: left;">
+          <div style="background: var(--card); padding: 40px; border: 1px solid var(--border);">
+            <p style="font-weight: 700;">Raphael Nava</p>
+            <p style="color: var(--muted); font-size: 14px;">info@callmainstream.com</p>
+            <p style="font-family: 'Bebas Neue'; font-size: 40px;">714.926.1290</p>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <div class="qr-box"><img src="Qr.png" alt="QR" style="max-width: 100%;"></div>
+            <p class="brochure-label">SCAN TO REQUEST AUDIT</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div style="width:100%; padding: 20px 40px; background: rgba(8,8,8,0.9); border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; margin-top: 40px;">
+      <div>MAINSTREAM ELECTRIC | COMMERCIAL CATALOG 2026</div>
+      <div style="color:var(--green); font-weight: 700;">714.926.1290</div>
+    </div>
+  </body>
+</html>
